@@ -361,11 +361,12 @@
         ];
 
         state.playTop = h * 0.08;
-        state.playBottom = h * 0.92;
+        state.playBottom = h * 0.9;
 
         const p = state.player;
-        p.radius = Math.max(10, 12 * state.view.scale);
-        p.y = state.playBottom - p.radius * 1.8;
+        // Keep player clearly above the bottom edge on all aspect ratios.
+        p.radius = Math.max(12, 13 * state.view.scale);
+        p.y = state.playBottom - p.radius * 2.2;
 
         p.x = state.lanes[p.lane] || state.lanes[1];
         p.startX = p.x;
@@ -694,8 +695,16 @@
         ctx.save();
         ctx.translate(p.x, p.y);
 
-        ctx.shadowColor = 'rgba(110, 247, 255, 0.75)';
-        ctx.shadowBlur = 16 * state.view.scale;
+        // Ground glow helps visibility against all backgrounds.
+        ctx.save();
+        ctx.fillStyle = 'rgba(110, 247, 255, 0.26)';
+        ctx.beginPath();
+        ctx.ellipse(0, r * 1.35, r * 1.15, r * 0.36, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.shadowColor = 'rgba(110, 247, 255, 0.9)';
+        ctx.shadowBlur = 20 * state.view.scale;
 
         // Triangle-like shape for directional visual identity.
         ctx.fillStyle = '#6ef7ff';
@@ -708,6 +717,9 @@
 
         // Core highlight.
         ctx.shadowBlur = 0;
+        ctx.lineWidth = Math.max(1.5, 2.2 * state.view.scale);
+        ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+        ctx.stroke();
         ctx.fillStyle = 'rgba(255,255,255,0.5)';
         ctx.beginPath();
         ctx.arc(0, r * 0.12, r * 0.26, 0, Math.PI * 2);
