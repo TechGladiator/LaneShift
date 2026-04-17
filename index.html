@@ -293,6 +293,27 @@
       // ---------------------------
       // Game data
       // ---------------------------
+      const HIGH_SCORE_KEY = 'laneShiftHighScore';
+
+      function readHighScore() {
+        try {
+          const raw = localStorage.getItem(HIGH_SCORE_KEY);
+          const parsed = Number(raw);
+          return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 0;
+        } catch (_) {
+          // Storage is optional (can throw in sandboxed/opaque origins).
+          return 0;
+        }
+      }
+
+      function persistHighScore(value) {
+        try {
+          localStorage.setItem(HIGH_SCORE_KEY, String(value));
+        } catch (_) {
+          // Ignore persistence failures and continue with in-memory score.
+        }
+      }
+
       const GAME_STATE = {
         TITLE: 'title',
         PLAYING: 'playing',
@@ -323,7 +344,7 @@
         obstacleSize: 24,
 
         score: 0,
-        highScore: Number(localStorage.getItem('laneShiftHighScore') || 0),
+        highScore: readHighScore(),
         sessionNewHigh: false,
 
         elapsed: 0,
@@ -426,7 +447,7 @@
 
         if (roundedScore > state.highScore) {
           state.highScore = roundedScore;
-          localStorage.setItem('laneShiftHighScore', String(state.highScore));
+          persistHighScore(state.highScore);
           state.sessionNewHigh = true;
         }
 
