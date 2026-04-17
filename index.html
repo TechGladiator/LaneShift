@@ -371,6 +371,12 @@
         p.x = state.lanes[p.lane] || state.lanes[1];
         p.startX = p.x;
         p.targetX = p.x;
+
+        // Keep active obstacles aligned to their logical lanes after resizes/rotation.
+        for (let i = 0; i < state.obstacles.length; i++) {
+          const obstacle = state.obstacles[i];
+          obstacle.x = state.lanes[obstacle.lane] || state.lanes[1];
+        }
       }
 
       // ---------------------------
